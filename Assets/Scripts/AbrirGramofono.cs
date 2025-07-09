@@ -6,6 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class AbrirGramofono : MonoBehaviour
 {
     public Animator animator;
+    public EstadoGramofonoController fsm;  // Referencia a la FSM
 
     private XRBaseInteractable interactable;
     private bool yaAbierta = false;
@@ -18,11 +19,11 @@ public class AbrirGramofono : MonoBehaviour
 
     private void OnSelect(SelectEnterEventArgs args)
     {
-        // Solo una vez
-        if (!yaAbierta)
+        if (!yaAbierta && fsm != null && fsm.estadoActual == EstadoGramofono.Closed)
         {
             animator.SetTrigger("Abrir");
             yaAbierta = true;
+            fsm.AbrirTapa();  // Avanza en la FSM
         }
     }
 

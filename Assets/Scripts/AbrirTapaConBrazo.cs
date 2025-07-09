@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//Controla la animación de apertura de la tapa y coordinar cuándo el brazo debe seguirla
 public class AbrirTapaConBrazo : MonoBehaviour
 {
     public Animator animator;
@@ -14,8 +14,6 @@ public class AbrirTapaConBrazo : MonoBehaviour
 
         if (animator != null)
             animator.SetTrigger("Abrir");
-
-        // Opcional: desactivar el constraint tras un retardo
         StartCoroutine(DesactivarTrasRetraso(1.5f)); // ajusta el tiempo a la duración de la animación
     }
 
