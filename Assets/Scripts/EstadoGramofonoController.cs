@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EstadoGramofonoController : MonoBehaviour
-{    public EstadoGramofono estadoActual = EstadoGramofono.Closed;
+{   public EstadoGramofono estadoActual = EstadoGramofono.Closed;
     public void AbrirTapa()
     {
         if (estadoActual == EstadoGramofono.Closed)
