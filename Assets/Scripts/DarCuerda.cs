@@ -6,14 +6,14 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class DarCuerda : MonoBehaviour
 {
     public EstadoGramofonoController fsm;
-    public Transform ejeRotacion;
-    public float gradosParaCuerda = 360f;
+    public float gradosParaCuerda = 360f; // objetivo
+    public Animator animator; // referencia al animator de la manivela
 
     private XRGrabInteractable grab;
-    private Quaternion rotacionInicial;
     private float gradosAcumulados = 0f;
     private bool cuerdaDada = false;
     private IXRSelectInteractor interactorActual;
+    private Quaternion rotacionInicial;
 
     private void Awake()
     {
@@ -34,11 +34,16 @@ public class DarCuerda : MonoBehaviour
         rotacionInicial = interactorActual.transform.rotation;
         gradosAcumulados = 0f;
         cuerdaDada = false;
+
+        // Reiniciamos animación
+        animator.Play("ManivelaGira", 0, 0f);
+        animator.speed = 0f;
     }
 
     private void OnSuelta(SelectExitEventArgs args)
     {
         interactorActual = null;
+        animator.speed = 0f; // Pausar animación al soltar
     }
 
     private void Update()
@@ -46,25 +51,23 @@ public class DarCuerda : MonoBehaviour
         if (fsm.estadoActual != EstadoGramofono.Disk_Ready || cuerdaDada || interactorActual == null) return;
 
         Quaternion rotacionActual = interactorActual.transform.rotation;
-        Quaternion deltaRotation = rotacionActual * Quaternion.Inverse(rotacionInicial);
-
-        // Extraemos solo la rotación en el eje X
-        float deltaX = deltaRotation.eulerAngles.x;
+        Quaternion delta = rotacionActual * Quaternion.Inverse(rotacionInicial);
+        float deltaX = delta.eulerAngles.x;
         if (deltaX > 180f) deltaX -= 360f;
 
         gradosAcumulados += Mathf.Abs(deltaX);
         rotacionInicial = rotacionActual;
 
-        // Aplicar rotación al eje (solo en X)
-        ejeRotacion.localRotation *= Quaternion.Euler(deltaX, 0f, 0f);
+        // Avanzar la animación proporcional al progreso
+        float progreso = Mathf.Clamp01(gradosAcumulados / gradosParaCuerda);
+        animator.Play("ManivelaGira", 0, progreso);
+        animator.speed = 0f; // fijamos manualmente el progreso
 
         if (gradosAcumulados >= gradosParaCuerda)
         {
             cuerdaDada = true;
             fsm.DarCuerda();
-            Debug.Log("🎉 ¡Cuerda dada!");
+            Debug.Log("✅ ¡Cuerda dada!");
         }
-
-        Debug.Log("Giro acumulado: " + gradosAcumulados);
     }
 }
