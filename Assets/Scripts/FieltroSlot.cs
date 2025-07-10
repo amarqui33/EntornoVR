@@ -35,8 +35,7 @@ public class FieltroSlot : MonoBehaviour
             if (fieltroGrab != null) fieltroGrab.enabled = false;
 
             // Cambiar de estado
-            fsm.estadoActual = EstadoGramofono.Felt_Ready;
+            fsm.ColocarFieltro();
         }
     }
 }
-

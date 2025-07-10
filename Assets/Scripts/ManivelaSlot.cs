@@ -52,38 +52,18 @@ public class ManivelaSlot : MonoBehaviour
             manivelaRb.isKinematic = true;
             manivelaRb.useGravity = false;
         }
-        manivelaGrabInteractable.enabled = false;
+        manivelaGrabInteractable.trackPosition = false; // no mover
+        manivelaGrabInteractable.trackRotation = true;  // sí girar
+        manivelaGrabInteractable.movementType = XRGrabInteractable.MovementType.Kinematic;
+
+
 
         manivelaInsertada = true;
 
         // Avisar a la FSM que la manivela está lista
         if (fsm != null)
         {
-            fsm.estadoActual = EstadoGramofono.Manivela_Ready;
-        }
-    }
-
-    // Método público para quitar la manivela (por ejemplo, llamado desde la FSM o UI)
-    public void QuitarManivela()
-    {
-        if (!manivelaInsertada) return;
-
-        // Habilitar interacción y física para poder agarrar la manivela otra vez
-        if (manivelaGrabInteractable != null)
-            manivelaGrabInteractable.enabled = true;
-
-        if (manivelaRb != null)
-        {
-            manivelaRb.isKinematic = false;
-            manivelaRb.useGravity = true;
-        } 
-
-        manivelaInsertada = false;
-
-        // Puedes avisar a la FSM que la manivela ya no está insertada, si quieres
-        if (fsm != null)
-        {
-            fsm.estadoActual = EstadoGramofono.Open_Empty;
+            fsm.InsertarManivela();
         }
     }
 }

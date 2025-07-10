@@ -14,7 +14,7 @@ public class AbrirTapaConBrazo : MonoBehaviour
 
         if (animator != null)
             animator.SetTrigger("Abrir");
-        StartCoroutine(DesactivarTrasRetraso(1.5f)); // ajusta el tiempo a la duración de la animación
+        StartCoroutine(DesactivarTrasRetraso(1.5f)); //tiempo duración animación
     }
 
     private System.Collections.IEnumerator DesactivarTrasRetraso(float segundos)
