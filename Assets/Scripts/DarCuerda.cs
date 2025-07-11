@@ -32,7 +32,7 @@ public class DarCuerda : MonoBehaviour
     {
         interactorActual = args.interactorObject;
         rotacionInicial = interactorActual.transform.rotation;
-        gradosAcumulados = 0f;
+        gradosAcumulados = 0f;  
         cuerdaDada = false;
 
         // Reiniciamos animación
@@ -67,7 +67,7 @@ public class DarCuerda : MonoBehaviour
         {
             cuerdaDada = true;
             fsm.DarCuerda();
-            Debug.Log("✅ ¡Cuerda dada!");
+            Debug.Log("¡Cuerda dada!");
         }
     }
 }

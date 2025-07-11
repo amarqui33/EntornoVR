@@ -3,13 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EstadoGramofonoController : MonoBehaviour
-{   public EstadoGramofono estadoActual = EstadoGramofono.Closed;
+{   
+    public EstadoGramofono estadoActual = EstadoGramofono.Closed;
+    public DialogueUI dialogueUI;
+
+    private void CambiarEstado(EstadoGramofono nuevoEstado)
+    {
+        estadoActual = nuevoEstado;
+        if (dialogueUI != null)
+            dialogueUI.MostrarDialogo(nuevoEstado.ToString());
+    }
+
     public void AbrirTapa()
     {
         if (estadoActual == EstadoGramofono.Closed)
         {
             Debug.Log("Tapa abierta");
-            estadoActual = EstadoGramofono.Open_Empty;
+            CambiarEstado(EstadoGramofono.Open_Empty);
         }
         else
         {
@@ -22,7 +32,7 @@ public class EstadoGramofonoController : MonoBehaviour
         if (estadoActual == EstadoGramofono.Open_Empty)
         {
             Debug.Log("Manivela insertada");
-            estadoActual = EstadoGramofono.Manivela_Ready;
+            CambiarEstado(EstadoGramofono.Manivela_Ready);
         }
         else
         {
@@ -35,7 +45,7 @@ public class EstadoGramofonoController : MonoBehaviour
         if (estadoActual == EstadoGramofono.Manivela_Ready)
         {
             Debug.Log("Fieltro colocado");
-            estadoActual = EstadoGramofono.Felt_Ready;
+            CambiarEstado(EstadoGramofono.Felt_Ready);
         }
     }
 
@@ -44,7 +54,7 @@ public class EstadoGramofonoController : MonoBehaviour
         if (estadoActual == EstadoGramofono.Felt_Ready)
         {
             Debug.Log("Disco colocado");
-            estadoActual = EstadoGramofono.Disk_Ready;
+            CambiarEstado(EstadoGramofono.Disk_Ready);
         }
     }
 
@@ -53,7 +63,7 @@ public class EstadoGramofonoController : MonoBehaviour
         if (estadoActual == EstadoGramofono.Disk_Ready)
         {
             Debug.Log("Cuerda dada");
-            estadoActual = EstadoGramofono.Wound;
+            CambiarEstado(EstadoGramofono.Wound);
         }
     }
 
@@ -62,7 +72,7 @@ public class EstadoGramofonoController : MonoBehaviour
         if (estadoActual == EstadoGramofono.Wound)
         {
             Debug.Log("Freno quitado");
-            estadoActual = EstadoGramofono.Playing_Ready;
+            CambiarEstado(EstadoGramofono.Playing_Ready);
         }
     }
 
@@ -71,7 +81,7 @@ public class EstadoGramofonoController : MonoBehaviour
         if (estadoActual == EstadoGramofono.Playing_Ready)
         {
             Debug.Log("Aguja bajada: empieza el sonido");
-            estadoActual = EstadoGramofono.Playing_Sound;
+            CambiarEstado(EstadoGramofono.Playing_Sound);
         }
     }
 
@@ -80,7 +90,7 @@ public class EstadoGramofonoController : MonoBehaviour
         if (estadoActual == EstadoGramofono.Playing_Sound)
         {
             Debug.Log("Aguja levantada");
-            estadoActual = EstadoGramofono.Playing_Ready;
+            CambiarEstado(EstadoGramofono.Playing_Ready);
         }
     }
 
@@ -89,7 +99,7 @@ public class EstadoGramofonoController : MonoBehaviour
         if (estadoActual == EstadoGramofono.Playing_Ready)
         {
             Debug.Log("Freno puesto: el plato se detiene");
-            estadoActual = EstadoGramofono.Stopped;
+            CambiarEstado(EstadoGramofono.Stopped);
         }
     }
 
@@ -98,7 +108,7 @@ public class EstadoGramofonoController : MonoBehaviour
         if (estadoActual == EstadoGramofono.Stopped)
         {
             Debug.Log("Gramófono reseteado");
-            estadoActual = EstadoGramofono.Open_Empty;
+            CambiarEstado(EstadoGramofono.Open_Empty);
         }
     }
 
