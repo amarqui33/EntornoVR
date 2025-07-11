@@ -6,8 +6,8 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class DarCuerda : MonoBehaviour
 {
     public EstadoGramofonoController fsm;
-    public float gradosParaCuerda = 360f; // objetivo
-    public Animator animator; // referencia al animator de la manivela
+    public float gradosParaCuerda = 360f;
+    public Animator animator;
 
     private XRGrabInteractable grab;
     private float gradosAcumulados = 0f;
@@ -43,7 +43,7 @@ public class DarCuerda : MonoBehaviour
     private void OnSuelta(SelectExitEventArgs args)
     {
         interactorActual = null;
-        animator.speed = 0f; // Pausar animación al soltar
+        animator.speed = 0f; // Pausa animación al soltar
     }
 
     private void Update()
@@ -58,7 +58,7 @@ public class DarCuerda : MonoBehaviour
         gradosAcumulados += Mathf.Abs(deltaX);
         rotacionInicial = rotacionActual;
 
-        // Avanzar la animación proporcional al progreso
+        // Avanza la animación proporcional al progreso
         float progreso = Mathf.Clamp01(gradosAcumulados / gradosParaCuerda);
         animator.Play("ManivelaGira", 0, progreso);
         animator.speed = 0f; // fijamos manualmente el progreso

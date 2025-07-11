@@ -29,18 +29,18 @@ public class Frenar : MonoBehaviour
         {
             animatorFreno.Play("QuitarFreno");
 
-            // Activar giro en todos los componentes
+            // Activa giro en todos los elementos que giran
             foreach (var g in giradores)
             {
                 g.ActivarGiro(true);
             }
 
             fsm.QuitarFreno();
-            Debug.Log("🎵 Freno quitado: Fieltro y vinilo girando...");
+            Debug.Log("Freno quitado: Fieltro y vinilo girando...");
         }
         else
         {
-            Debug.LogWarning("❌ No puedes quitar el freno en este estado: " + fsm.estadoActual);
+            Debug.LogWarning("No puedes quitar el freno en este estado: " + fsm.estadoActual);
         }
     }
 }

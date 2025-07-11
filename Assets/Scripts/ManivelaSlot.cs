@@ -5,8 +5,8 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class ManivelaSlot : MonoBehaviour
 {
-    public Transform posicionInsertada; // posición exacta donde quedará la manivela insertada
-    public EstadoGramofonoController fsm; // referencia a la FSM para actualizar estado
+    public Transform posicionInsertada; // posición donde quedará la manivela insertada
+    public EstadoGramofonoController fsm;
 
     private XRGrabInteractable manivelaGrabInteractable;
     private Rigidbody manivelaRb;
@@ -15,7 +15,7 @@ public class ManivelaSlot : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (manivelaInsertada) return; // ya está insertada, no hacer nada
+        if (manivelaInsertada) return;
 
         if (other.CompareTag("Manivela"))
         {
@@ -33,7 +33,7 @@ public class ManivelaSlot : MonoBehaviour
     {
         if (manivelaGrabInteractable == null) return;
 
-        // Soltar la manivela del agarre del jugador
+        // Suelta la manivela del agarre
         var interactor = manivelaGrabInteractable.GetOldestInteractorSelecting();
 
         if (interactor != null)
@@ -42,25 +42,25 @@ public class ManivelaSlot : MonoBehaviour
         }
 
 
-        // Posicionar y alinear la manivela en el slot
+        // Posicionaa y alineaa la manivela en el slot
         manivelaGrabInteractable.transform.position = posicionInsertada.position;
         manivelaGrabInteractable.transform.rotation = posicionInsertada.rotation;
 
-        // Bloquear la manivela (no física ni interacción)
+        // Bloqueaa la manivela
         if (manivelaRb != null)
         {
             manivelaRb.isKinematic = true;
             manivelaRb.useGravity = false;
         }
-        manivelaGrabInteractable.trackPosition = false; // no mover
-        manivelaGrabInteractable.trackRotation = true;  // sí girar
+        manivelaGrabInteractable.trackPosition = false; //no se meuve
+        manivelaGrabInteractable.trackRotation = true;  //gira
         manivelaGrabInteractable.movementType = XRGrabInteractable.MovementType.Kinematic;
 
 
 
         manivelaInsertada = true;
 
-        // Avisar a la FSM que la manivela está lista
+        // Avisa a la FSM que la manivela está lista
         if (fsm != null)
         {
             fsm.InsertarManivela();

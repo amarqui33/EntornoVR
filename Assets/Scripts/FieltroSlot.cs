@@ -1,11 +1,11 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class FieltroSlot : MonoBehaviour
 {
-    public Transform posicionInsertada; // posición final del fieltro
+    public Transform posicionInsertada; // posiciÃ³n final del fieltro
     public EstadoGramofonoController fsm;
 
     private void OnTriggerEnter(Collider other)
@@ -26,15 +26,15 @@ public class FieltroSlot : MonoBehaviour
                 }
             }
 
-            // Posicionar fieltro
+            // Posiciona fieltro
             other.transform.position = posicionInsertada.position;
             other.transform.rotation = posicionInsertada.rotation;
 
-            // Desactivar física e interacción
+            // Desactiva fÃ­sica e interacciÃ³n
             if (rb != null) rb.isKinematic = true;
             if (fieltroGrab != null) fieltroGrab.enabled = false;
 
-            // Cambiar de estado
+            // Cambia de estado
             fsm.ColocarFieltro();
         }
     }

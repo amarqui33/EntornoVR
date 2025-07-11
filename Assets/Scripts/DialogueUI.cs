@@ -15,16 +15,16 @@ public class DialogueUI : MonoBehaviour
     void Start()
     {
         textComponent.text = string.Empty;
-        dialogueBox.SetActive(false); // Oculta al inicio
+        dialogueBox.SetActive(false); //oculta al inicio
     }
 
-    // Llama a este método desde otro script para mostrar un diálogo según el estado
+    // muestra un diálogo según el estado
     public void MostrarDialogo(string estado)
     {
         lines = ObtenerTextoPorEstado(estado);
         if (lines.Length == 0) return;
 
-        StopAllCoroutines(); // Por si hay otra animación de texto activa
+        StopAllCoroutines();
         dialogueBox.SetActive(true);
         index = 0;
         StartCoroutine(MostrarLineas());
@@ -37,26 +37,25 @@ public class DialogueUI : MonoBehaviour
             case "Closed":
                 return new string[] { "Abre la tapa del gramófono." };
             case "Open_Empty":
-                return new string[] { "Inserta la manivela." };
+                return new string[] { "¡Felicidades! Has abierto el Gramófono. Ahora inserta la manivela en el lateral derecho de la base" };
             case "Manivela_Ready":
-                return new string[] { "Coloca el fieltro sobre el plato." };
+                return new string[] { "Has colocado la manivela en posición. Ahora debes colocar un fieltro sobre el plato" };
             case "Felt_Ready":
-                return new string[] { "Coloca el disco sobre el fieltro." };
+                return new string[] { "¡Genial! Escoge un disco y colocalo sobre el fieltro. ¡Tienes varios discos disponibles!" };
             case "Disk_Ready":
-                return new string[] { "Gira la manivela para dar cuerda." };
+                return new string[] { "¡Bien hecho! Ahora gira la manivela hasta que tengamos suficiente cuerda" };
             case "Wound":
-                return new string[] { "Quita el freno para empezar." };
+                return new string[] { "Ahora que la cuerda está dada debes quitar el freno" };
             case "Playing_Ready":
-                return new string[] { "Coloca la aguja en el disco." };
+                return new string[] { "El plato está girando, para reproducir el audio debes colocar el brazo fonocaptor en posición y la aguja sobre el disco" };
             case "Playing_Sound":
                 return new string[] { "¡Reproduciendo música!" };
             case "Stopped":
-                return new string[] { "El gramófono se ha detenido." };
+                return new string[] { "El gramófono se ha detenido" };
             default:
-                return new string[0]; // <- Asegura que siempre se devuelve algo
+                return new string[0];
         }
     }
-
 
     private IEnumerator MostrarLineas()
     {
@@ -79,6 +78,20 @@ public class DialogueUI : MonoBehaviour
             yield return new WaitForSeconds(textSpeed);
         }
     }
+
+        public void MostrarDialogoPersonalizado(string mensaje)
+    {
+        StopAllCoroutines(); // Detiene cualquier diálogo anterior
+        dialogueBox.SetActive(true); // Muestra la caja de diálogo
+        textComponent.text = ""; // Limpia el texto actual
+        StartCoroutine(EscribirLinea(mensaje)); // Escribe letra por letra el nuevo mensaje
+        StartCoroutine(CerrarDialogoPasadoTiempo()); // Lo oculta tras X segundos
+    }
+
+    private IEnumerator CerrarDialogoPasadoTiempo()
+    {
+        yield return new WaitForSeconds(tiempoVisible);
+        dialogueBox.SetActive(false);
+    }
+
 }
-
-

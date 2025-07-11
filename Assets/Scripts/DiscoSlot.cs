@@ -1,41 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class DiscoSlot : MonoBehaviour
 {
-    public Transform posicionInsertada; // posición final del disco
     public EstadoGramofonoController fsm;
+    private GameObject discoColocado;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (fsm.estadoActual != EstadoGramofono.Felt_Ready) return;
+        if (discoColocado != null) return;
 
         if (other.CompareTag("Disco"))
         {
-            XRGrabInteractable discoGrab = other.GetComponent<XRGrabInteractable>();
-            Rigidbody rb = other.GetComponent<Rigidbody>();
+            discoColocado = other.gameObject;
 
-            if (discoGrab != null && discoGrab.isSelected)
+            // Coloca el disco en la posiciÃ³n del slot
+            discoColocado.transform.position = transform.position;
+            discoColocado.transform.rotation = transform.rotation;
+
+            // Desactiva la interacciÃ³n
+            XRGrabInteractable grab = discoColocado.GetComponent<XRGrabInteractable>();
+            if (grab != null)
             {
-                var interactor = discoGrab.interactorsSelecting.Count > 0 ? discoGrab.interactorsSelecting[0] : null;
-                if (interactor != null)
-                {
-                    discoGrab.interactionManager.SelectExit(interactor, discoGrab);
-                }
+                grab.enabled = false;
+                grab.interactionManager?.CancelInteractableSelection((IXRSelectInteractable)grab);
             }
 
-            // Posicionar disco
-            other.transform.position = posicionInsertada.position;
-            other.transform.rotation = posicionInsertada.rotation;
-
-            // Desactivar física e interacción
-            if (rb != null) rb.isKinematic = true;
-            if (discoGrab != null) discoGrab.enabled = false;
-
-            // Cambiar de estado
-            fsm.ColocarDisco();
+            fsm.ColocarDisco(discoColocado);
+            Debug.Log("ðŸ’¿ Disco colocado sobre el plato.");
         }
     }
 }

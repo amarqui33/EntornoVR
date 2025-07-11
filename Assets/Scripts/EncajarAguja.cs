@@ -31,15 +31,14 @@ public class EncajarAguja : MonoBehaviour
 
             sonidoDisco.Play();
 
-            // Deshabilitar la interacción para que no se pueda mover más
+            // Deshabilita la interacción para que no se pueda mover más
             if (grabInteractable != null)
             {
                 grabInteractable.enabled = false;
-                // También puedes cancelar la interacción actual:
                 grabInteractable.interactionManager?.CancelInteractableSelection((IXRSelectInteractable)grabInteractable);
             }
 
-            Debug.Log("🎶 Aguja colocada: ¡Reproducción iniciada!");
+            Debug.Log("Aguja colocada: ¡Reproducción iniciada!");
         }
     }
 }

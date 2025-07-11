@@ -6,6 +6,8 @@ public class EstadoGramofonoController : MonoBehaviour
 {   
     public EstadoGramofono estadoActual = EstadoGramofono.Closed;
     public DialogueUI dialogueUI;
+    public AudioSource audioSource;
+    private Disco discoActual;
 
     private void CambiarEstado(EstadoGramofono nuevoEstado)
     {
@@ -49,11 +51,17 @@ public class EstadoGramofonoController : MonoBehaviour
         }
     }
 
-    public void ColocarDisco()
+    public void ColocarDisco(GameObject discoGO)
     {
         if (estadoActual == EstadoGramofono.Felt_Ready)
         {
-            Debug.Log("Disco colocado");
+            discoActual = discoGO.GetComponent<Disco>();
+            if (discoActual != null)
+            {
+                Debug.Log("Disco colocado: " + discoActual.nombreDisco);
+                dialogueUI.MostrarDialogoPersonalizado("Disco seleccionado: " + discoActual.nombreDisco);
+            }
+
             CambiarEstado(EstadoGramofono.Disk_Ready);
         }
     }
