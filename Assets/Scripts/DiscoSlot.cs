@@ -4,31 +4,38 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class DiscoSlot : MonoBehaviour
 {
+    public Transform posicionInsertada; // Posición del disco en el plato
     public EstadoGramofonoController fsm;
+
     private GameObject discoColocado;
 
     private void OnTriggerEnter(Collider other)
     {
         if (discoColocado != null) return;
+        if (!other.CompareTag("Disco")) return;
 
-        if (other.CompareTag("Disco"))
+        XRGrabInteractable discoGrab = other.GetComponent<XRGrabInteractable>();
+        Rigidbody rb = other.GetComponent<Rigidbody>();
+
+        if (discoGrab != null && discoGrab.isSelected)
         {
-            discoColocado = other.gameObject;
-
-            // Coloca el disco en la posición del slot
-            discoColocado.transform.position = transform.position;
-            discoColocado.transform.rotation = transform.rotation;
-
-            // Desactiva la interacción
-            XRGrabInteractable grab = discoColocado.GetComponent<XRGrabInteractable>();
-            if (grab != null)
+            var interactor = discoGrab.interactorsSelecting.Count > 0 ? discoGrab.interactorsSelecting[0] : null;
+            if (interactor != null)
             {
-                grab.enabled = false;
-                grab.interactionManager?.CancelInteractableSelection((IXRSelectInteractable)grab);
+                discoGrab.interactionManager.SelectExit(interactor, discoGrab);
             }
-
-            fsm.ColocarDisco(discoColocado);
-            Debug.Log("💿 Disco colocado sobre el plato.");
         }
+
+        // Posiciona el disco en la posición insertada
+        other.transform.position = posicionInsertada.position;
+        other.transform.rotation = posicionInsertada.rotation;
+
+        // Desactiva física e interacción
+        if (rb != null) rb.isKinematic = true;
+        if (discoGrab != null) discoGrab.enabled = false;
+
+        discoColocado = other.gameObject;
+        fsm.ColocarDisco(discoColocado);
+        Debug.Log("💿 Disco colocado correctamente en el slot.");
     }
 }
