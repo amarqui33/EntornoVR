@@ -35,7 +35,7 @@ public class DialogueUI : MonoBehaviour
         switch (estado)
         {
             case "Closed":
-                return new string[] { "Abre la tapa del gramófono." };
+                return new string[] { "¡Felicidades, ya sabes como operar el gramófono!" };
             case "Open_Empty":
                 return new string[] { "¡Felicidades! Has abierto el Gramófono. Ahora inserta la manivela en el lateral derecho de la base" };
             case "Manivela_Ready":

@@ -92,7 +92,7 @@ public class ManivelaSlot : MonoBehaviour
             manivelaInsertada = false;
             listaParaQuitar = false;
 
-            Debug.Log("🛠️ Manivela retirada por el jugador");
+            Debug.Log("🛠Manivela retirada");
         }
     }
 }

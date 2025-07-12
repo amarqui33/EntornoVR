@@ -135,21 +135,19 @@ public class EstadoGramofonoController : MonoBehaviour
     {
         if (estadoActual == EstadoGramofono.Felt_Removed)
         {
-            Debug.Log("Fieltro quitado");
+            Debug.Log("Manivela quitada");
             CambiarEstado(EstadoGramofono.Manivela_Removed);
         }
     }
 
-
-    public void Resetear()
+    public void CerrarGramofono()
     {
-        if (estadoActual == EstadoGramofono.Stopped)
+        if (estadoActual == EstadoGramofono.Manivela_Removed)
         {
-            Debug.Log("Gramófono reseteado");
-            CambiarEstado(EstadoGramofono.Open_Empty);
+            Debug.Log("Gramófono cerrado");
+            CambiarEstado(EstadoGramofono.Closed);
         }
     }
-
     public EstadoGramofono ObtenerEstado()
     {
         return estadoActual;
