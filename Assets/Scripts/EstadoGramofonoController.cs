@@ -131,6 +131,15 @@ public class EstadoGramofonoController : MonoBehaviour
         }
     }
 
+    public void QuitarManivela()
+    {
+        if (estadoActual == EstadoGramofono.Felt_Removed)
+        {
+            Debug.Log("Fieltro quitado");
+            CambiarEstado(EstadoGramofono.Manivela_Removed);
+        }
+    }
+
 
     public void Resetear()
     {

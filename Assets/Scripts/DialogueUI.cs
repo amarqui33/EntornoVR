@@ -123,6 +123,10 @@ public class DialogueUI : MonoBehaviour
         {
             return new string[] { "El fieltro ha sido retirado. Ahora puedes retirar la manivela." };
         }
+        if (estadoNuevo == "Manovela_Removed" && estadoAnterior == "Felt_Removed")
+        {
+            return new string[] { "Has retirado la manivela. Guardala y ya puede cerrar el caja." };
+        }
 
         return ObtenerTextoPorEstado(estadoNuevo);
     }

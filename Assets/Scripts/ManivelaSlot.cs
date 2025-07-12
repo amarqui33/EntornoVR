@@ -1,69 +1,98 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class ManivelaSlot : MonoBehaviour
 {
-    public Transform posicionInsertada; // posiciÛn donde quedar· la manivela insertada
+    public Transform posicionInsertada;
     public EstadoGramofonoController fsm;
 
-    private XRGrabInteractable manivelaGrabInteractable;
+    private XRGrabInteractable manivelaGrab;
     private Rigidbody manivelaRb;
 
+    private GameObject manivela;
     private bool manivelaInsertada = false;
+    private bool listaParaQuitar = false;
 
     private void OnTriggerEnter(Collider other)
     {
         if (manivelaInsertada) return;
-
-        if (other.CompareTag("Manivela"))
+        if (!other.CompareTag("Manivela")) return;
+        if (fsm.estadoActual != EstadoGramofono.Open_Empty &&
+            fsm.estadoActual != EstadoGramofono.Manivela_Ready)
         {
-            manivelaGrabInteractable = other.GetComponent<XRGrabInteractable>();
-            manivelaRb = other.GetComponent<Rigidbody>();
+            Debug.LogWarning("No puedes insertar la manivela en este estado.");
+            return;
+        }
 
-            if (manivelaGrabInteractable != null && manivelaGrabInteractable.isSelected)
-            {
-                InsertarManivela();
-            }
+        manivela = other.gameObject;
+        manivelaGrab = manivela.GetComponent<XRGrabInteractable>();
+        manivelaRb = manivela.GetComponent<Rigidbody>();
+
+        if (manivelaGrab != null && manivelaGrab.isSelected)
+        {
+            InsertarManivela();
         }
     }
 
     private void InsertarManivela()
     {
-        if (manivelaGrabInteractable == null) return;
-
-        // Suelta la manivela del agarre
-        var interactor = manivelaGrabInteractable.GetOldestInteractorSelecting();
-
+        var interactor = manivelaGrab.GetOldestInteractorSelecting();
         if (interactor != null)
         {
-            manivelaGrabInteractable.interactionManager.SelectExit(interactor, manivelaGrabInteractable);
+            manivelaGrab.interactionManager.SelectExit(interactor, manivelaGrab);
         }
 
+        manivela.transform.position = posicionInsertada.position;
+        manivela.transform.rotation = posicionInsertada.rotation;
 
-        // Posicionaa y alineaa la manivela en el slot
-        manivelaGrabInteractable.transform.position = posicionInsertada.position;
-        manivelaGrabInteractable.transform.rotation = posicionInsertada.rotation;
-
-        // Bloqueaa la manivela
         if (manivelaRb != null)
         {
             manivelaRb.isKinematic = true;
             manivelaRb.useGravity = false;
         }
-        manivelaGrabInteractable.trackPosition = false; //no se meuve
-        manivelaGrabInteractable.trackRotation = true;  //gira
-        manivelaGrabInteractable.movementType = XRGrabInteractable.MovementType.Kinematic;
 
-
+        manivelaGrab.trackPosition = false;
+        manivelaGrab.trackRotation = true;
+        manivelaGrab.movementType = XRGrabInteractable.MovementType.Kinematic;
 
         manivelaInsertada = true;
+        listaParaQuitar = false;
 
-        // Avisa a la FSM que la manivela est· lista
         if (fsm != null)
         {
             fsm.InsertarManivela();
+        }
+    }
+
+    private void Update()
+    {
+        // Espera hasta que pasamos a estado Felt_Removed para permitir que se pueda liberar
+        if (manivelaInsertada && fsm.estadoActual == EstadoGramofono.Felt_Removed)
+        {
+            listaParaQuitar = true;
+        }
+
+        // Si est√° lista para quitar y el usuario la agarra
+        if (listaParaQuitar && manivelaGrab != null && manivelaGrab.isSelected)
+        {
+            // Libera restricciones
+            if (manivelaRb != null)
+            {
+                manivelaRb.isKinematic = false;
+                manivelaRb.useGravity = true;
+            }
+
+            manivelaGrab.trackPosition = true;
+            manivelaGrab.movementType = XRGrabInteractable.MovementType.VelocityTracking;
+
+            // Cambia de estado
+            fsm.QuitarManivela();
+
+            // Actualiza flags
+            manivelaInsertada = false;
+            listaParaQuitar = false;
+
+            Debug.Log("üõ†Ô∏è Manivela retirada por el jugador");
         }
     }
 }

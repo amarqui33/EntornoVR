@@ -10,5 +10,6 @@
         Playing_Sound,
         Stopped,
         Disk_Removed,
-        Felt_Removed
+        Felt_Removed,
+        Manivela_Removed
     }
