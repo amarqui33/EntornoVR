@@ -4,18 +4,45 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class DiscoSlot : MonoBehaviour
 {
-    public Transform posicionInsertada; // Posición del disco en el plato
+    public Transform posicionInsertada;
     public EstadoGramofonoController fsm;
 
     private GameObject discoColocado;
+    private XRGrabInteractable discoGrab;
+    private Rigidbody discoRb;
+
+    private void Update()
+    {
+        if (discoColocado != null && fsm.estadoActual == EstadoGramofono.Stopped)
+        {
+            if (discoGrab != null && !discoGrab.enabled)
+            {
+                discoGrab.enabled = true;
+                if (discoRb != null) discoRb.isKinematic = false;
+                Debug.Log("✅ Disco habilitado para ser retirado.");
+            }
+
+            if (discoGrab != null && discoGrab.isSelected)
+            {
+                fsm.QuitarDisco();
+
+                // 🔴 Desactivar el slot para evitar recolocación automática
+                GetComponent<Collider>().enabled = false;
+
+                discoColocado = null;
+                discoGrab = null;
+                discoRb = null;
+            }
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (discoColocado != null) return;
         if (!other.CompareTag("Disco")) return;
 
-        XRGrabInteractable discoGrab = other.GetComponent<XRGrabInteractable>();
-        Rigidbody rb = other.GetComponent<Rigidbody>();
+        discoGrab = other.GetComponent<XRGrabInteractable>();
+        discoRb = other.GetComponent<Rigidbody>();
 
         if (discoGrab != null && discoGrab.isSelected)
         {
@@ -26,12 +53,10 @@ public class DiscoSlot : MonoBehaviour
             }
         }
 
-        // Posiciona el disco en la posición insertada
         other.transform.position = posicionInsertada.position;
         other.transform.rotation = posicionInsertada.rotation;
 
-        // Desactiva física e interacción
-        if (rb != null) rb.isKinematic = true;
+        if (discoRb != null) discoRb.isKinematic = true;
         if (discoGrab != null) discoGrab.enabled = false;
 
         discoColocado = other.gameObject;

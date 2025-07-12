@@ -27,9 +27,9 @@ public class Frenar : MonoBehaviour
     {
         if (fsm.estadoActual == EstadoGramofono.Wound)
         {
-            animatorFreno.Play("QuitarFreno");
+            // Estamos montando → quitar freno
+            animatorFreno.SetTrigger("ActivarFreno");
 
-            // Activa giro en todos los elementos que giran
             foreach (var g in giradores)
             {
                 g.ActivarGiro(true);
@@ -38,9 +38,23 @@ public class Frenar : MonoBehaviour
             fsm.QuitarFreno();
             Debug.Log("Freno quitado: Fieltro y vinilo girando...");
         }
+        else if (fsm.estadoActual == EstadoGramofono.Playing_Ready)
+        {
+            // Estamos desmontando → poner freno
+            // No lanzamos animación, solo aseguramos volver al estado Idle
+            animatorFreno.Play("IdleFreno"); // Reinicia al estado inicial
+
+            foreach (var g in giradores)
+            {
+                g.ActivarGiro(false); // Detener el giro
+            }
+
+            fsm.PonerFreno(); // Cambia a Stopped y lanza mensaje contextual
+            Debug.Log("Freno puesto: plato detenido.");
+        }
         else
         {
-            Debug.LogWarning("No puedes quitar el freno en este estado: " + fsm.estadoActual);
+            Debug.LogWarning("No puedes usar el freno en este estado: " + fsm.estadoActual);
         }
     }
 }

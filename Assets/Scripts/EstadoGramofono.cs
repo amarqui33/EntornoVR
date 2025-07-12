@@ -8,5 +8,7 @@
         Wound,
         Playing_Ready,
         Playing_Sound,
-        Stopped
+        Stopped,
+        Disk_Removed,
+        Felt_Removed
     }

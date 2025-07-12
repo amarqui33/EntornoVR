@@ -5,37 +5,65 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class FieltroSlot : MonoBehaviour
 {
-    public Transform posicionInsertada; // posición final del fieltro
+    public Transform posicionInsertada; // Posición final del fieltro
     public EstadoGramofonoController fsm;
+
+    private GameObject fieltroColocado;
+    private XRGrabInteractable fieltroGrab;
+    private Rigidbody fieltroRb;
 
     private void OnTriggerEnter(Collider other)
     {
+        if (fieltroColocado != null) return;
         if (fsm.estadoActual != EstadoGramofono.Manivela_Ready) return;
+        if (!other.CompareTag("Fieltro")) return;
 
-        if (other.CompareTag("Fieltro"))
+        fieltroGrab = other.GetComponent<XRGrabInteractable>();
+        fieltroRb = other.GetComponent<Rigidbody>();
+
+        if (fieltroGrab != null && fieltroGrab.isSelected)
         {
-            XRGrabInteractable fieltroGrab = other.GetComponent<XRGrabInteractable>();
-            Rigidbody rb = other.GetComponent<Rigidbody>();
+            var interactor = fieltroGrab.interactorsSelecting.Count > 0 ? fieltroGrab.interactorsSelecting[0] : null;
+            if (interactor != null)
+            {
+                fieltroGrab.interactionManager.SelectExit(interactor, fieltroGrab);
+            }
+        }
+
+        // Posiciona el fieltro
+        other.transform.position = posicionInsertada.position;
+        other.transform.rotation = posicionInsertada.rotation;
+
+        // Desactiva física e interacción
+        if (fieltroRb != null) fieltroRb.isKinematic = true;
+        if (fieltroGrab != null) fieltroGrab.enabled = false;
+
+        fieltroColocado = other.gameObject;
+        fsm.ColocarFieltro();
+        Debug.Log("🟣 Fieltro colocado correctamente.");
+    }
+
+    private void Update()
+    {
+        if (fieltroColocado != null && fsm.estadoActual == EstadoGramofono.Disk_Removed)
+        {
+            if (fieltroGrab != null && !fieltroGrab.enabled)
+            {
+                fieltroGrab.enabled = true;
+                if (fieltroRb != null) fieltroRb.isKinematic = false;
+                Debug.Log("✅ Fieltro habilitado para ser retirado.");
+            }
 
             if (fieltroGrab != null && fieltroGrab.isSelected)
             {
-                var interactor = fieltroGrab.interactorsSelecting.Count > 0 ? fieltroGrab.interactorsSelecting[0] : null;
-                if (interactor != null)
-                {
-                    fieltroGrab.interactionManager.SelectExit(interactor, fieltroGrab);
-                }
+                fsm.QuitarFieltro();
+                GetComponent<Collider>().enabled = false; // Desactiva el slot
+                Debug.Log("🟤 Fieltro retirado.");
+
+                fieltroColocado = null;
+                fieltroGrab = null;
+                fieltroRb = null;
             }
-
-            // Posiciona fieltro
-            other.transform.position = posicionInsertada.position;
-            other.transform.rotation = posicionInsertada.rotation;
-
-            // Desactiva física e interacción
-            if (rb != null) rb.isKinematic = true;
-            if (fieltroGrab != null) fieltroGrab.enabled = false;
-
-            // Cambia de estado
-            fsm.ColocarFieltro();
         }
     }
 }

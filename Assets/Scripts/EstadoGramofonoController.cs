@@ -11,9 +11,11 @@ public class EstadoGramofonoController : MonoBehaviour
 
     private void CambiarEstado(EstadoGramofono nuevoEstado)
     {
+        EstadoGramofono estadoAnterior = estadoActual;
         estadoActual = nuevoEstado;
+
         if (dialogueUI != null)
-            dialogueUI.MostrarDialogo(nuevoEstado.ToString());
+            dialogueUI.MostrarDialogoConContexto(nuevoEstado.ToString(), estadoAnterior.ToString());
     }
 
     public void AbrirTapa()
@@ -110,6 +112,25 @@ public class EstadoGramofonoController : MonoBehaviour
             CambiarEstado(EstadoGramofono.Stopped);
         }
     }
+
+    public void QuitarDisco()
+    {
+        if (estadoActual == EstadoGramofono.Stopped)
+        {
+            Debug.Log("Disco quitado");
+            CambiarEstado(EstadoGramofono.Disk_Removed);
+        }
+    }
+
+    public void QuitarFieltro()
+    {
+        if (estadoActual == EstadoGramofono.Disk_Removed)
+        {
+            Debug.Log("Fieltro quitado");
+            CambiarEstado(EstadoGramofono.Felt_Removed);
+        }
+    }
+
 
     public void Resetear()
     {

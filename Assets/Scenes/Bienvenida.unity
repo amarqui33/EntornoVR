@@ -6639,6 +6639,7 @@ MonoBehaviour:
   posicionReposoBrazo: {fileID: 353781728}
   fsm: {fileID: 710044304}
   sonidoDisco: {fileID: 1114503240}
+  extensionBrazo: {fileID: 1695039440}
 --- !u!114 &1987774149
 MonoBehaviour:
   m_ObjectHideFlags: 0

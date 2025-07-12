@@ -94,4 +94,36 @@ public class DialogueUI : MonoBehaviour
         dialogueBox.SetActive(false);
     }
 
+    public void MostrarDialogoConContexto(string estadoNuevo, string estadoAnterior)
+    {
+        lines = ObtenerTextoPorEstadoConContexto(estadoNuevo, estadoAnterior);
+        if (lines.Length == 0) return;
+
+        StopAllCoroutines();
+        dialogueBox.SetActive(true);
+        index = 0;
+        StartCoroutine(MostrarLineas());
+    }
+
+    private string[] ObtenerTextoPorEstadoConContexto(string estadoNuevo, string estadoAnterior)
+    {
+        if (estadoNuevo == "Playing_Ready" && estadoAnterior == "Playing_Sound")
+        {
+            return new string[] { "Para seguir desmontando el gramófono, pon el freno para detener el plato." };
+        }
+        if (estadoNuevo == "Stopped" && estadoAnterior == "Playing_Ready")
+        {
+            return new string[] { "Para seguir desmontando, quita el disco del plato." };
+        }
+        if (estadoNuevo == "Disk_Removed" && estadoAnterior == "Stopped")
+        {
+            return new string[] { "Perfecto, el disco ha sido retirado. Ahora puedes quitar el fieltro." };
+        }
+        if (estadoNuevo == "Felt_Removed" && estadoAnterior == "Disk_Removed")
+        {
+            return new string[] { "El fieltro ha sido retirado. Ahora puedes retirar la manivela." };
+        }
+
+        return ObtenerTextoPorEstado(estadoNuevo);
+    }
 }
