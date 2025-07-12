@@ -2,12 +2,14 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class AgujaController : MonoBehaviour
+public class EncajarAguja : MonoBehaviour
 {
     public Transform posicionFinalAguja;       // Posición fija sobre el disco
     public Transform posicionReposoBrazo;      // Posición original fuera del disco
     public EstadoGramofonoController fsm;
     public AudioSource sonidoDisco;
+    public Transform extensionBrazo;
+
 
     private XRGrabInteractable grabInteractable;
     private bool reproduciendo = false;
@@ -70,24 +72,26 @@ public class AgujaController : MonoBehaviour
 
     private IEnumerator VolverABrazoReposo()
     {
+        Vector3 startPos = extensionBrazo.position;
+        Quaternion startRot = extensionBrazo.rotation;
+
+        Vector3 targetPos = posicionReposoBrazo.position;
+        Quaternion targetRot = posicionReposoBrazo.rotation;
+
         float duracion = 1f;
         float t = 0f;
 
-        Vector3 startPos = transform.position;
-        Quaternion startRot = transform.rotation;
-
-        while (t < duracion)
+        while (t < 1f)
         {
-            t += Time.deltaTime;
-            float factor = Mathf.Clamp01(t / duracion);
-
-            transform.position = Vector3.Lerp(startPos, posicionReposoBrazo.position, factor);
-            transform.rotation = Quaternion.Slerp(startRot, posicionReposoBrazo.rotation, factor);
-
+            t += Time.deltaTime / duracion;
+            extensionBrazo.position = Vector3.Lerp(startPos, targetPos, t);
+            extensionBrazo.rotation = Quaternion.Slerp(startRot, targetRot, t);
             yield return null;
         }
 
-        transform.position = posicionReposoBrazo.position;
-        transform.rotation = posicionReposoBrazo.rotation;
+        extensionBrazo.position = targetPos;
+        extensionBrazo.rotation = targetRot;
+
+        Debug.Log("Extensión del brazo volvió a la posición de reposo.");
     }
 }
